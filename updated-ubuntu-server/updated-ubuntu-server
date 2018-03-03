@@ -19,6 +19,7 @@ GMAIL_SMTP_PASS=$(<$GMAIL_SMTP_PASS_PATH)
 chmod 400 $GMAIL_SMTP_USER_PATH
 GMAIL_SMTP_USER=$(<$GMAIL_SMTP_USER_PATH)
 
+# Set FQDN
 cat hosts > /etc/hosts
 
 sudo apt-get update && \
@@ -29,8 +30,10 @@ sudo apt-get update && \
     sendmail \
     mailutils \
     sendmail-bin \
-    ssh
+    ssh \
+    wget
 
+# Configure email for root
 mkdir -p -m 700 $MAIL_AUTH_DIR
 
 sed -e "s/\${GMAIL_SMTP_USER}/$GMAIL_SMTP_USER/" gmail-auth > $MAIL_AUTH_DIR'gmail-auth'
@@ -43,4 +46,11 @@ makemap hash gmail-auth < gmail-auth
 cd ..
 make -C /etc/mail
 /etc/init.d/sendmail reload
+popd
+
+# Install root and intermediate certificates
+pushd /usr/local/share/ca-certificates
+wget -O ca.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLSEZLQmVMUmxoVDQ"
+wget -O intermediate.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLRkZLaHMtZTBvTDQ"
+update-ca-certificates
 popd
