@@ -11,6 +11,9 @@ GMAIL_SMTP_PASS_PATH=/etc/agolden/GMAIL_SMTP_PASS
 GMAIL_SMTP_USER_PATH=/etc/agolden/GMAIL_SMTP_USER
 UNATTENDED_UPGRADES_CONF_PATH=/etc/apt/apt.conf.d/50unattended-upgrades
 MAIL_AUTH_DIR=/etc/mail/authinfo/
+LOCAL_USER=alex
+LOCAL_USER_SSH_PATH=/home/$LOCAL_USER/.ssh
+
 
 # Read in the relevant secrets
 chmod 400 $GMAIL_SMTP_PASS_PATH
@@ -54,3 +57,11 @@ wget -O ca.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-
 wget -O intermediate.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLRkZLaHMtZTBvTDQ"
 update-ca-certificates
 popd
+
+# Enable certificate-based SSH
+mkdir -p -m 700 ~/.ssh
+cat authorized_keys > $LOCAL_USER_SSH_PATH'/authorized_keys'
+chmod 600 $LOCAL_USER_SSH_PATH'/authorized_keys'
+chown -R alex:alex $LOCAL_USER_SSH_PATH
+cat sshd_config > /etc/ssh/sshd_config
+service sshd restart
