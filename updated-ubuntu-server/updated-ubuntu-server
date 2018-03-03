@@ -62,6 +62,6 @@ popd
 mkdir -p -m 700 ~/.ssh
 cat authorized_keys > $LOCAL_USER_SSH_PATH'/authorized_keys'
 chmod 600 $LOCAL_USER_SSH_PATH'/authorized_keys'
-chown -R alex:alex $LOCAL_USER_SSH_PATH
+chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_USER_SSH_PATH
 cat sshd_config > /etc/ssh/sshd_config
 service sshd restart
