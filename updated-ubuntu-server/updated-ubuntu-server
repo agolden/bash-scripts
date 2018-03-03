@@ -26,7 +26,8 @@ sudo apt-get update && \
     unattended-upgrades \
     sendmail \
     mailutils \
-    sendmail-bin
+    sendmail-bin \
+    ssh
 
 mkdir -p -m 700 $MAIL_AUTH_DIR
 
