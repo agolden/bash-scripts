@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# Update a fresh install of Ubuntu Server 16.04 to a base
+# image suitable for further configuration.
+
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+GMAIL_SMTP_PASS_PATH=/etc/agolden/GMAIL_SMTP_PASS
+GMAIL_SMTP_USER_PATH=/etc/agolden/GMAIL_SMTP_USER
+UNATTENDED_UPGRADES_CONF_PATH=/etc/apt/apt.conf.d/50unattended-upgrades
+MAIL_AUTH_DIR=/etc/mail/authinfo/
+
+# Read in the relevant secrets
+chmod 400 $GMAIL_SMTP_PASS_PATH
+GMAIL_SMTP_PASS=$(<$GMAIL_SMTP_PASS_PATH)
+
+chmod 400 $GMAIL_SMTP_USER_PATH
+GMAIL_SMTP_USER=$(<$GMAIL_SMTP_USER_PATH)
+
+sudo apt-get update && \
+  apt-get upgrade -yq && \
+  apt-get dist-upgrade -yq && \
+  apt-get install -yq wget \
+    unattended-upgrades \
+    sendmail \
+    mailutils \
+    sendmail-bin
+
+mkdir -p -m 700 $MAIL_AUTH_DIR
+
+sed -e "s/\${GMAIL_SMTP_USER}/$GMAIL_SMTP_USER/" gmail-auth > $MAIL_AUTH_DIR'gmail-auth'
+sed -i "s/\${GMAIL_SMTP_PASS}/$GMAIL_SMTP_PASS/" $MAIL_AUTH_DIR'gmail-auth'
+chmod 400 $MAIL_AUTH_DIR'gmail-auth'
+
+cat sendmail.mc > /etc/mail/sendmail.mc
+cat hosts > /etc/hosts
+pushd $MAIL_AUTH_DIR
+makemap hash gmail-auth < gmail-auth
+cd ..
+make -C /etc/mail
+/etc/init.d/sendmail reload
+popd

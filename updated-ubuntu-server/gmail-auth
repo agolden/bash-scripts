@@ -1,0 +1,1 @@
+AuthInfo: "U:root" "I:${GMAIL_SMTP_USER}" "P:${GMAIL_SMTP_PASS}"
