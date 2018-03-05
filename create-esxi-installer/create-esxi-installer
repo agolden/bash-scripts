@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# Prepare a usb disk for installing ESXi
+
+set -e
+
+USB_DISK_DEFAULT=/dev/loop10
+
+pushd /tmp/
+fdisk -l /dev/sd*
+
+read -p "Please enter usb device [$USB_DISK_DEFAULT]: " USB_DISK
+USB_DISK="${USB_DISK:-$USB_DISK_DEFAULT}"
+
+ISO_FILE_NAME=VMware-VMvisor-Installer-201701001-4887370.x86_64.iso
+
+if [ ! -f $ISO_FILE_NAME ]; then
+  wget https://s3.amazonaws.com/amg-server-content/$ISO_FILE_NAME
+fi
+
+mkdir -p iso
+mount -t iso9660 -o loop,ro VMware-VMvisor-Installer-201701001-4887370.x86_64.iso iso
+
+parted --script $USB_DISK \
+  mklabel msdos \
+  mkpart primary 1MiB 499MiB
+
+mkfs.vfat -F 32 $USB_DISK'p1'
+
+apt-get install -yq syslinux mtools
+syslinux -s $USB_DISK'p1'
+
+mkdir usb
+mount -t vfat $USB_DISK'p1' usb/
+
+cp -r iso/* usb/
+mv usb/isolinux.cfg usb/syslinux.cfg
+
+umount iso/
+umount usb/
+rm -rf iso
+rm -rf usb
+
+popd
