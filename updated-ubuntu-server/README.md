@@ -17,3 +17,5 @@ git clone https://github.com/agolden/bash-scripts.git
 cd bash-scripts/updated-ubuntu-server
 sudo ./updated-ubuntu-server
 ```
+
+**NOTE**: To skip configuration of a local smtp server, use the -m option

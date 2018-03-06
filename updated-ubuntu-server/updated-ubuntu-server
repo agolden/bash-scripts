@@ -13,14 +13,14 @@ UNATTENDED_UPGRADES_CONF_PATH=/etc/apt/apt.conf.d/50unattended-upgrades
 MAIL_AUTH_DIR=/etc/mail/authinfo/
 LOCAL_USER=alex
 LOCAL_USER_SSH_PATH=/home/$LOCAL_USER/.ssh
+NO_MAIL="false"
 
-
-# Read in the relevant secrets
-chmod 400 $GMAIL_SMTP_PASS_PATH
-GMAIL_SMTP_PASS=$(<$GMAIL_SMTP_PASS_PATH)
-
-chmod 400 $GMAIL_SMTP_USER_PATH
-GMAIL_SMTP_USER=$(<$GMAIL_SMTP_USER_PATH)
+while getopts 'm' flag; do
+  case "${flag}" in
+    m) NO_MAIL="true" ;;
+    *) error "Unexpected option ${flag}" ;;
+  esac
+done
 
 # Set FQDN
 cat hosts > /etc/hosts
@@ -37,19 +37,30 @@ sudo apt-get update && \
     wget
 
 # Configure email for root
-mkdir -p -m 700 $MAIL_AUTH_DIR
 
-sed -e "s/\${GMAIL_SMTP_USER}/$GMAIL_SMTP_USER/" gmail-auth > $MAIL_AUTH_DIR'gmail-auth'
-sed -i "s/\${GMAIL_SMTP_PASS}/$GMAIL_SMTP_PASS/" $MAIL_AUTH_DIR'gmail-auth'
-chmod 400 $MAIL_AUTH_DIR'gmail-auth'
+if ["$NO_MAIL" == "false"]; then
 
-cat sendmail.mc > /etc/mail/sendmail.mc
-pushd $MAIL_AUTH_DIR
-makemap hash gmail-auth < gmail-auth
-cd ..
-make -C /etc/mail
-/etc/init.d/sendmail reload
-popd
+  # Read in the relevant secrets
+  chmod 400 $GMAIL_SMTP_PASS_PATH
+  GMAIL_SMTP_PASS=$(<$GMAIL_SMTP_PASS_PATH)
+
+  chmod 400 $GMAIL_SMTP_USER_PATH
+  GMAIL_SMTP_USER=$(<$GMAIL_SMTP_USER_PATH)
+
+  mkdir -p -m 700 $MAIL_AUTH_DIR
+
+  sed -e "s/\${GMAIL_SMTP_USER}/$GMAIL_SMTP_USER/" gmail-auth > $MAIL_AUTH_DIR'gmail-auth'
+  sed -i "s/\${GMAIL_SMTP_PASS}/$GMAIL_SMTP_PASS/" $MAIL_AUTH_DIR'gmail-auth'
+  chmod 400 $MAIL_AUTH_DIR'gmail-auth'
+
+  cat sendmail.mc > /etc/mail/sendmail.mc
+  pushd $MAIL_AUTH_DIR
+  makemap hash gmail-auth < gmail-auth
+  cd ..
+  make -C /etc/mail
+  /etc/init.d/sendmail reload
+  popd
+fi
 
 # Install root and intermediate certificates
 pushd /usr/local/share/ca-certificates
