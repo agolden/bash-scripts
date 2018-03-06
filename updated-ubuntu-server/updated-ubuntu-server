@@ -25,6 +25,8 @@ done
 # Set FQDN
 cat hosts > /etc/hosts
 
+sed -i '/deb cdrom/d' /etc/apt/sources.list
+
 sudo apt-get update && \
   apt-get upgrade -yq && \
   apt-get dist-upgrade -yq && \

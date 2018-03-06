@@ -6,10 +6,10 @@ set -e
 
 export DEBIAN_FRONTEND=noninteractive
 
-sudo apt-get update && \
-  apt-get install -yq virtualbox \
-    virtualbox-ext-pack \
-    curl
+apt-get update
+apt-get install -yq virtualbox \
+  virtualbox-ext-pack \
+  curl
 
 # install minikube
 
@@ -46,4 +46,4 @@ if [ ! -f $KUBECTL_INSTALL_DIR'kubectl' ]; then
   popd
 fi
 
-minikube start
+sudo -i -u alex minikube start
