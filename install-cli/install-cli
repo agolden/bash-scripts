@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Install the vSphere CLI (a.k.a. Perl SDK) for administrative tasks (e.g., ESXi configuration back-up/restore)
+
+set -e
+
+apt-get install -yq lib32z1 \
+  lib32ncurses5 \
+  build-essential \
+  uuid \
+  uuid-dev \
+  libssl-dev \
+  perl-doc \
+  libxml-libxml-perl \
+  libcrypt-ssleay-perl \
+  libsoap-lite-perl \
+  libmodule-build-perl
+
+pushd /tmp/
+
+INSTALLER_FILE_NAME=VMware-vSphere-CLI-6.5.0-4566394.x86_64.tar.gz
+
+if [ ! -f $INSTALLER_FILE_NAME ]; then
+  wget https://s3.amazonaws.com/amg-server-content/$INSTALLER_FILE_NAME
+fi
+
+tar –zxvf $INSTALLER_FILE_NAME
+
+# accept defaults
+vmware-vsphere-cli-distrib/vmware-install.pl
+
+popd
