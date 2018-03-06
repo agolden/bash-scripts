@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Deploy a local kubernetes instance for development purposes
+
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+sudo apt-get update && \
+  apt-get install -yq virtualbox \
+    virtualbox-ext-pack \
+    curl
+
+# install minikube
+
+# see https://github.com/kubernetes/minikube/releases
+MINIKUBE_VERSION=0.25
+MINIKUBE_SUB_VERSION=0
+
+MINIKUBE_INSTALL_DIR=/usr/local/bin/
+
+if [ ! -f $MINIKUBE_INSTALL_DIR'minikube' ]; then
+  pushd /tmp/
+
+  curl -Lo minikube 'https://storage.googleapis.com/minikube/releases/v'$MINIKUBE_VERSION'.'$MINIKUBE_SUB_VERSION'/minikube-linux-amd64' && \
+    chmod +x minikube && \
+    sudo mv minikube $MINIKUBE_INSTALL_DIR
+
+  popd
+fi
+
+# install kubectl
+
+# see https://github.com/kubernetes/minikube/releases
+KUBECTL_VERSION=1.9.0
+
+KUBECTL_INSTALL_DIR=/usr/local/bin/
+
+if [ ! -f $KUBECTL_INSTALL_DIR'kubectl' ]; then
+  pushd /tmp/
+
+  curl -Lo kubectl 'https://storage.googleapis.com/kubernetes-release/release/v'$KUBECTL_VERSION'/bin/linux/amd64/kubectl' && \
+    chmod +x kubectl && \
+    sudo mv kubectl $KUBECTL_INSTALL_DIR
+
+  popd
+fi
+
+minikube start
