@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+#
+# Backup the OpenWrt config to S3
+
+use LWP::UserAgent;
+use File::Slurp;
+use POSIX 'strftime';
+# use Data::Dumper;
+
+my $url_base = 'http://openwrt.agolden.com';
+my $url = "${url_base}/cgi-bin/luci";
+my $ua      = LWP::UserAgent->new(); 
+$ua->cookie_jar( {} );
+
+my %form;
+$form{'luci_username'}='root';
+$form{'luci_password'}=read_file( '/etc/agolden/LUCI_PASSWORD' ) ;
+
+my $response = $ua->post( $url, \%form ); 
+my $location = $response->header('location');
+
+# my $content = $response->as_string();
+# print Dumper(\$ua->cookie_jar);
+
+my $backup_url = $url_base . $location . "/admin/system/flashops";
+# print $backup_url;
+
+my %form2;
+$form2{'backup'}='Generate Archive';
+
+my $response2 = $ua->post( $backup_url, \%form2 );
+my $file = $response2->decoded_content( charset => 'none' );
+
+my $timestamp = strftime("%Y-%m-%d_%H-%M-%S", localtime(time));
+my $output_file = "/tmp/openwrt_config_${timestamp}.tar.gz";
+open FILEHANDLE, ">" . $output_file;
+print FILEHANDLE $response2->{_content};
+close FILEHANDLE;
+
+chmod(0600, $output_file);
+
+# TODO: Encrypt the file, upload it to S3, and delete the temporary file

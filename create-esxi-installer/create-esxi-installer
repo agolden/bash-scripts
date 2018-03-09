@@ -25,13 +25,15 @@ parted --script $USB_DISK \
   mklabel msdos \
   mkpart primary 1MiB 499MiB
 
-mkfs.vfat -F 32 $USB_DISK'p1'
+partprobe
+
+mkfs.vfat -F 32 $USB_DISK'1'
 
 apt-get install -yq syslinux mtools
-syslinux -s $USB_DISK'p1'
+syslinux -s $USB_DISK'1'
 
 mkdir usb
-mount -t vfat $USB_DISK'p1' usb/
+mount -t vfat $USB_DISK'1' usb/
 
 cp -r iso/* usb/
 mv usb/isolinux.cfg usb/syslinux.cfg
