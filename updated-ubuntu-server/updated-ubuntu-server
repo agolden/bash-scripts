@@ -14,6 +14,7 @@ MAIL_AUTH_DIR=/etc/mail/authinfo/
 LOCAL_USER=alex
 LOCAL_USER_SSH_PATH=/home/$LOCAL_USER/.ssh
 NO_MAIL="false"
+SUDOERS_DIR=/etc/sudoers.d/
 
 while getopts 'm' flag; do
   case "${flag}" in
@@ -78,3 +79,7 @@ chmod 600 $LOCAL_USER_SSH_PATH'/authorized_keys'
 chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_USER_SSH_PATH
 cat sshd_config > /etc/ssh/sshd_config
 service sshd restart
+
+# Disable sudo password
+cp 89-agoldenimg-alex $SUDOERS_DIR
+chmod 440 $SUDOERS_DIR'89-agoldenimg-alex'
