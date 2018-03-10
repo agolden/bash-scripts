@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+#
+# Backup the ESXi config to S3
+
+# use LWP::UserAgent;
+use File::Slurp;
+use POSIX 'strftime';
+# use Data::Dumper;
+
+my $timestamp = strftime("%Y-%m-%d_%H-%M-%S", localtime(time));
+my $output_file = "/tmp/esxi_config_${timestamp}.tgz";
+my $esxi_pass = read_file( '/etc/agolden/ESXI_PASSWORD' ) ;
+$esxi_pass =~ s/\R//g;
+
+my $cmd="vicfg-cfgbackup --server=192.168.48.2 --username=root --password=$esxi_pass -s $output_file";
+system($cmd);
+
+# TODO: Encrypt the file, upload it to S3, and delete the temporary file
