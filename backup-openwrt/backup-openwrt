@@ -7,6 +7,8 @@ use File::Slurp;
 use POSIX 'strftime';
 # use Data::Dumper;
 
+# TODO: Add openwrt to hosts file (if not already there)
+
 my $url_base = 'http://openwrt.agolden.com';
 my $url = "${url_base}/cgi-bin/luci";
 my $ua      = LWP::UserAgent->new(); 
