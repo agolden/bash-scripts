@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Install the keepass client
+
+set -e
+
+apt-add-repository ppa:jtaylor/keepass -y
+apt-get update
+apt-get install keepass2 -y
