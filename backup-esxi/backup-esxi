@@ -13,6 +13,15 @@ my $esxi_pass = read_file( '/etc/agolden/ESXI_PASSWORD' ) ;
 $esxi_pass =~ s/\R//g;
 
 my $cmd="vicfg-cfgbackup --server=192.168.48.2 --username=root --password=$esxi_pass -s $output_file";
-system($cmd);
+# system($cmd);
+
+# openssl rsa -in ~/.ssh/id_rsa -pubout > ~/.ssh/id_rsa.pub.pem
+# openssl smime -encrypt -binary -aes-256-cbc -in id_rsa.pub -out encrypted.zip.enc -outform DER id_rsa.pub.pem
+
+my$cmd3="gpg --list-secret-keys";
+system($cmd3);
+
+my $backup_cmd="aws s3 cp $output_file s3://amg-enc-backups/";
+#system($backup_cmd);
 
 # TODO: Encrypt the file, upload it to S3, and delete the temporary file
