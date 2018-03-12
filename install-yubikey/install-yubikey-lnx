@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# Configure your YubiKeys
+
+set -e
+
+BASE_FILE_NAME=yubikey-personalization-gui-3.1.25
+
+pushd ~/
+
+# https://www.yubico.com/support/knowledge-base/categories/articles/yubikey-personalization-tools/
+wget https://developers.yubico.com/yubikey-personalization-gui/Releases/$BASE_FILE_NAME.tar.gz
+tar -xvzf $BASE_FILE_NAME.tar.gz
+rm $BASE_FILE_NAME.tar.gz
+cd $BASE_FILE_NAME
+
+# See README
+sudo apt-get install -y \
+  libusb-1.0-0-dev \
+  qt4-qmake \
+  libykpers-1-dev \
+  libyubikey-dev \
+  libqt4-dev
+
+qmake && make
+
+popd
+
+pushd ~/
+
+BASE_FILE_NAME2=ykpers-1.18.1
+wget https://developers.yubico.com/yubikey-personalization/Releases/$BASE_FILE_NAME2.tar.gz
+tar -xvzf $BASE_FILE_NAME2.tar.gz
+rm $BASE_FILE_NAME2.tar.gz
+cd $BASE_FILE_NAME2
+
+# See REAME
+# sudo apt-get install -y \
+#  libyubikey-dev \
+#  libusb-1.0-0-dev
+
+autoreconf --install
+./configure
+make check install
+
+popd
