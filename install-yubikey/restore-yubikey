@@ -6,6 +6,9 @@ set -e
 
 YUBIKEY_STATIC_PRIVATE_ID_PATH=/etc/agolden/YUBIKEY_STATIC_PRIVATE_ID
 YUBIKEY_STATIC_SECRET_KEY_PATH=/etc/agolden/YUBIKEY_STATIC_SECRET_KEY
+YUBIKEY_OTP_PUBLIC_ID_PATH=/etc/agolden/YUBIKEY_OTP_PUBLIC_ID
+YUBIKEY_OTP_PRIVATE_ID_PATH=/etc/agolden/YUBIKEY_OTP_PRIVATE_ID
+YUBIKEY_OTP_SECRET_KEY_PATH=/etc/agolden/YUBIKEY_OTP_SECRET_KEY
 
 BASE_FILE_NAME2=ykpers-1.18.1
 pushd ~/$BASE_FILE_NAME2
@@ -19,14 +22,35 @@ pushd ~/$BASE_FILE_NAME2
   YUBIKEY_STATIC_SECRET_KEY=$(<$YUBIKEY_STATIC_SECRET_KEY_PATH)
   YUBIKEY_STATIC_SECRET_KEY2=$(echo $YUBIKEY_STATIC_SECRET_KEY | tr -d '\040\011\012\015' )
 
-  read -p "About to write static password to slot #1.  Are you sure? " -n 1 -r
+  chmod 400 $YUBIKEY_OTP_PUBLIC_ID_PATH
+  YUBIKEY_OTP_PUBLIC_ID=$(<$YUBIKEY_OTP_PUBLIC_ID_PATH)
+  YUBIKEY_OTP_PUBLIC_ID2=$(echo $YUBIKEY_OTP_PUBLIC_ID | tr -d '\040\011\012\015' )
+
+  chmod 400 $YUBIKEY_OTP_PRIVATE_ID_PATH
+  YUBIKEY_OTP_PRIVATE_ID=$(<$YUBIKEY_OTP_PRIVATE_ID_PATH)
+  YUBIKEY_OTP_PRIVATE_ID2=$(echo $YUBIKEY_OTP_PRIVATE_ID | tr -d '\040\011\012\015' )
+
+  chmod 400 $YUBIKEY_OTP_SECRET_KEY_PATH
+  YUBIKEY_OTP_SECRET_KEY=$(<$YUBIKEY_OTP_SECRET_KEY_PATH)
+  YUBIKEY_OTP_SECRET_KEY2=$(echo $YUBIKEY_OTP_SECRET_KEY | tr -d '\040\011\012\015' )
+
+  read -p "About to write OTP to slot #1.  Are you sure? " -n 1 -r
   echo    # (optional) move to a new line
   if [[ ! $REPLY =~ ^[Yy]$ ]]
   then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
   fi
 
-  ./ykpersonalize -1 -a$YUBIKEY_STATIC_SECRET_KEY2 -ostatic-ticket -ouid=$YUBIKEY_STATIC_PRIVATE_ID2  -ostrong-pw1 -ostrong-pw2
+  ./ykpersonalize -1 -a$YUBIKEY_OTP_SECRET_KEY2 -ouid=$YUBIKEY_OTP_PRIVATE_ID2 -ofixed=$YUBIKEY_OTP_PUBLIC_ID2
+
+  read -p "About to write static password to slot #2.  Are you sure? " -n 1 -r
+  echo    # (optional) move to a new line
+  if [[ ! $REPLY =~ ^[Yy]$ ]]
+  then
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+  fi
+
+  ./ykpersonalize -2 -a$YUBIKEY_STATIC_SECRET_KEY2 -ostatic-ticket -ouid=$YUBIKEY_STATIC_PRIVATE_ID2  -ostrong-pw1 -ostrong-pw2
 
 popd
 
