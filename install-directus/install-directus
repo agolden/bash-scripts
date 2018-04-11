@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Install directus headless CMS
+
+set -e
+
+apt-get update
+apt-get -y upgrade
+apt-get -y dist-upgrade
+
+MYSQL_CONFIG=/etc/mysql_defaults.cnf
+
+if [ ! -f $MYSQL_CONFIG ]; then
+  # generate mysql root password
+  MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
+
+  # set defaults
+  /bin/bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password password $MYSQL_ROOT_PASS'"
+  /bin/bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASS'"
+
+  sed -e "s/\${MYSQL_ROOT_PASS}/$MYSQL_ROOT_PASS/" mysql_defaults.cnf > $MYSQL_CONFIG
+  chmod 400 $MYSQL_CONFIG
+
+  echo "MySQL root password: $MYSQL_ROOT_PASS"
+fi
+
+apt-get install -y apache2 mysql-server php libapache2-mod-php php-mcrypt php-mysql php-xml php-mbstring php-curl php-gd unzip
+
+DIRECTUS_INSTALL_BASE_DIR=/var/www
+
+if [ ! -d "$DIRECTUS_INSTALL_BASE_DIR/directus" ]; then
+  pushd $DIRECTUS_INSTALL_BASE_DIR
+  git clone https://github.com/directus/directus.git directus
+  popd
+fi
+
+pushd $DIRECTUS_INSTALL_BASE_DIR/directus
+curl -s https://getcomposer.org/installer | php
+php composer.phar install
+popd
+
+mysql --defaults-extra-file=$MYSQL_CONFIG -e "CREATE DATABASE IF NOT EXISTS directus"
+MYSQL_DIRECTUS_PASS=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
+mysql --defaults-extra-file=$MYSQL_CONFIG -e "CREATE USER 'directus'@'localhost' IDENTIFIED BY '$MYSQL_DIRECTUS_PASS'"
+mysql --defaults-extra-file=$MYSQL_CONFIG -e "GRANT ALL PRIVILEGES ON directus.* TO 'directus'@'localhost'";
+
+echo "directus MySQL password: $MYSQL_DIRECTUS_PASS"
+
+a2enmod rewrite
+chown -R www-data:www-data $DIRECTUS_INSTALL_BASE_DIR/directus
+
+if [ ! -f /etc/apache2/sites-enabled/directus.conf ]; then
+  cp directus.conf /etc/apache2/sites-available/
+  rm /etc/apache2/sites-enabled/*
+  ln -s /etc/apache2/sites-available/directus.conf /etc/apache2/sites-enabled/directus.conf
+fi
+
+service apache2 restart
