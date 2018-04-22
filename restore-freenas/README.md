@@ -6,7 +6,7 @@
 
 ![Backplane](images/ethernet_layout.png?raw=true)
 
-igb0 = LAN1 --> Management network (.48/28)
+igb0 = LAN1 --> Management network (.48/28)  
 igb1 = LAN2 --> LAN network (.33/24)
 
 ## Restore configuration file
