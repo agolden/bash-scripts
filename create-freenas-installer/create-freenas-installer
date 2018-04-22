@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Prepare a usb disk for installing FreeNAS
+
+set -e
+
+USB_DISK_DEFAULT=sdx
+
+pushd /tmp/
+fdisk -l /dev/sd*
+
+read -p "Please enter usb device [$USB_DISK_DEFAULT]: " USB_DISK
+USB_DISK="${USB_DISK:-$USB_DISK_DEFAULT}"
+
+ISO_FILE_NAME=FreeNAS-11.1-U2.iso
+
+if [ ! -f $ISO_FILE_NAME ]; then
+  echo "$ISO_FILE_NAME doesn't exist. Download and place in /tmp/"
+  popd
+  exit 1
+fi
+
+parted --script /dev/$USB_DISK \
+  mklabel msdos \
+  mkpart primary 1MiB 499MiB
+
+partprobe
+
+dd if=$ISO_FILE_NAME of=/dev/$USB_DISK bs=64k
+
+echo "Installer creation complete"
+
+popd

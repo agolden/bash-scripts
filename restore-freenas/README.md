@@ -2,7 +2,7 @@
 
 ## Install FreeNAS
 
-TODO: Create FreeNAS installation USB key
+[Create FreeNAS installation USB key](../create-freenas-installer)
 
 Configure root password: /etc/agolden/DEFAULT_INSECURE_PASSWORD
 
