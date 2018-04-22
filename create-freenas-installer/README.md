@@ -1,5 +1,4 @@
-Download [FreeNAS ISO](https://drive.google.com/file/d/1v5H00dupmXJddzUTXS6acw_ClXxM3W1O/view?usp=sharing)
-Place into /tmp/
+Download [FreeNAS ISO](https://drive.google.com/file/d/1v5H00dupmXJddzUTXS6acw_ClXxM3W1O/view?usp=sharing); place into /tmp/
 
 ```
 git clone https://github.com/agolden/bash-scripts.git
