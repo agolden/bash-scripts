@@ -15,5 +15,4 @@ igb1 = LAN2 --> LAN network (.33/24)
 
 ## Restore configuration file
 
-TODO: Create FreeNAS configuration backup  
 TODO: Create FreeNAS configuration restore
