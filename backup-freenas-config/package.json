@@ -2,7 +2,7 @@
   "name": "backup-freenas-config",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backup.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +13,9 @@
     "googleapis": "^27.0.0",
     "isomorphic-fetch": "^2.2.1",
     "q": "^1.5.1",
-    "set-cookie-parser": "^2.1.1"
+    "restler": "^3.4.0",
+    "sanitize-filename": "^1.6.1",
+    "set-cookie-parser": "^2.1.1",
+    "unirest": "^0.5.1"
   }
 }
