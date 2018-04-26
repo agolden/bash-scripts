@@ -13,6 +13,4 @@ Configure root password: /etc/agolden/DEFAULT_INSECURE_PASSWORD
 igb0 = LAN1 --> Management network (.48/28)  
 igb1 = LAN2 --> LAN network (.33/24)
 
-## Restore configuration file
-
-TODO: Create FreeNAS configuration restore
+[Restore configuration file](../backup-freenas-config)
