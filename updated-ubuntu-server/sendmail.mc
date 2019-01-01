@@ -1,6 +1,6 @@
 divert(-1)dnl
 #-----------------------------------------------------------------------------
-# $Sendmail: debproto.mc,v 8.15.2 2015-12-10 18:02:49 cowboy Exp $
+# $Sendmail: debproto.mc,v 8.15.2 2018-01-13 23:43:05 cowboy Exp $
 #
 # Copyright (c) 1998-2010 Richard Nelson.  All Rights Reserved.
 #
@@ -16,7 +16,7 @@ divert(-1)dnl
 # If you modify this file, you will have to regenerate /etc/mail/sendmail.cf
 # by running this file through the m4 preprocessor via one of the following:
 #	* make   (or make -C /etc/mail)
-#	* sendmailconfig 
+#	* sendmailconfig
 #	* m4 /etc/mail/sendmail.mc > /etc/mail/sendmail.cf
 # The first two options are preferred as they will also update other files
 # that depend upon the contents of this file.
@@ -33,7 +33,7 @@ divert(0)dnl
 #
 define(`_USE_ETC_MAIL_')dnl
 include(`/usr/share/sendmail/cf/m4/cf.m4')dnl
-VERSIONID(`$Id: sendmail.mc, v 8.15.2-3 2015-12-10 18:02:49 cowboy Exp $')
+VERSIONID(`$Id: sendmail.mc, v 8.15.2-10 2018-01-13 23:43:05 cowboy Exp $')
 OSTYPE(`debian')dnl
 DOMAIN(`debian-mta')dnl
 dnl # Items controlled by /etc/mail/sendmail.conf - DO NOT TOUCH HERE
