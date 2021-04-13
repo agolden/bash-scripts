@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "es6-promise": "^4.2.4",
-    "googleapis": "^27.0.0",
+    "googleapis": "^39.1.0",
     "isomorphic-fetch": "^2.2.1",
     "q": "^1.5.1",
     "restler": "^3.4.0",
