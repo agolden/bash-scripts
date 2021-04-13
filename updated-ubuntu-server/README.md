@@ -13,6 +13,9 @@ sudo apt-get update && \
     wget \
     git
 
+git config --global user.email "felix@agolden.com"
+git config --global user.name "Alexander Golden"
+
 git clone https://github.com/agolden/bash-scripts.git
 cd bash-scripts/updated-ubuntu-server
 sudo ./updated-ubuntu-server

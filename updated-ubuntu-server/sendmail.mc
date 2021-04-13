@@ -1,6 +1,6 @@
 divert(-1)dnl
 #-----------------------------------------------------------------------------
-# $Sendmail: debproto.mc,v 8.15.2 2018-01-13 23:43:05 cowboy Exp $
+# $Sendmail: debproto.mc,v 8.15.2 2020-03-08 00:39:49 cowboy Exp $
 #
 # Copyright (c) 1998-2010 Richard Nelson.  All Rights Reserved.
 #
@@ -33,7 +33,7 @@ divert(0)dnl
 #
 define(`_USE_ETC_MAIL_')dnl
 include(`/usr/share/sendmail/cf/m4/cf.m4')dnl
-VERSIONID(`$Id: sendmail.mc, v 8.15.2-10 2018-01-13 23:43:05 cowboy Exp $')
+VERSIONID(`$Id: sendmail.mc, v 8.15.2-18 2020-03-08 00:39:49 cowboy Exp $')
 OSTYPE(`debian')dnl
 DOMAIN(`debian-mta')dnl
 dnl # Items controlled by /etc/mail/sendmail.conf - DO NOT TOUCH HERE
