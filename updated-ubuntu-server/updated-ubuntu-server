@@ -39,9 +39,15 @@ sudo apt-get update && \
     ssh \
     wget
 
+
+# Set time zone
+
+sudo timedatectl set-timezone America/New_York
+
 # Configure email for root
 
-if ["$NO_MAIL" == "false"]; then
+if (("${NO_MAIL}" == "false"))
+then
 
   # Read in the relevant secrets
   chmod 400 $GMAIL_SMTP_PASS_PATH
@@ -53,6 +59,7 @@ if ["$NO_MAIL" == "false"]; then
   mkdir -p -m 700 $MAIL_AUTH_DIR
 
   sed -e "s/\${GMAIL_SMTP_USER}/$GMAIL_SMTP_USER/" gmail-auth > $MAIL_AUTH_DIR'gmail-auth'
+
   sed -i "s/\${GMAIL_SMTP_PASS}/$GMAIL_SMTP_PASS/" $MAIL_AUTH_DIR'gmail-auth'
   chmod 400 $MAIL_AUTH_DIR'gmail-auth'
 
@@ -65,6 +72,8 @@ if ["$NO_MAIL" == "false"]; then
   popd
 fi
 
+sudo /etc/init.d/sendmail reload
+
 # Install root and intermediate certificates
 pushd /usr/local/share/ca-certificates
 wget -O ca.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLSEZLQmVMUmxoVDQ"
@@ -73,7 +82,7 @@ update-ca-certificates
 popd
 
 # Enable certificate-based SSH
-mkdir -p -m 700 ~/.ssh
+mkdir -p -m 700 $LOCAL_USER_SSH_PATH
 cat authorized_keys > $LOCAL_USER_SSH_PATH'/authorized_keys'
 chmod 600 $LOCAL_USER_SSH_PATH'/authorized_keys'
 chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_USER_SSH_PATH
