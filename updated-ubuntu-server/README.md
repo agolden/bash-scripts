@@ -4,7 +4,7 @@ You **MUST** create the following secret files prior to the running of this scri
 
 ```
 sudo apt-get update && \
-  apt-get install -yq wget \
+  sudo apt-get install -yq wget \
     unattended-upgrades \
     sendmail \
     mailutils \
