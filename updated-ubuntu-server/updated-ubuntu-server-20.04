@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Update a fresh install of Ubuntu Server 20.04 to a base
+# image suitable for further configuration.
+
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+LOCAL_USER=alex
+LOCAL_USER_SSH_PATH=/home/$LOCAL_USER/.ssh
+NO_MAIL="false"
+SUDOERS_DIR=/etc/sudoers.d/
+
+# Install root and intermediate certificates
+pushd /usr/local/share/ca-certificates
+wget -O ca.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLSEZLQmVMUmxoVDQ"
+wget -O intermediate.crt "https://drive.google.com/a/agolden.com/uc?export=download&id=0B-2mJXSMz6FLRkZLaHMtZTBvTDQ"
+update-ca-certificates
+popd
+
+# Enable certificate-based SSH
+mkdir -p -m 700 $LOCAL_USER_SSH_PATH
+cat authorized_keys > $LOCAL_USER_SSH_PATH'/authorized_keys'
+chmod 600 $LOCAL_USER_SSH_PATH'/authorized_keys'
+chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_USER_SSH_PATH
+cat sshd_config > /etc/ssh/sshd_config
+service sshd restart
+
+# Disable sudo password
+# cp 89-agoldenimg-alex $SUDOERS_DIR
+# chmod 440 $SUDOERS_DIR'89-agoldenimg-alex'
